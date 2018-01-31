@@ -164,6 +164,9 @@ sub routes() is export {
             content 'text/html', $header ~ "<br><br>" ~ $cups-table.render ~ $result;
         }
 
+        get -> "score" {
+            content 'text/html', $header ~ "<br><br>" ~ result-table().render;
+        }
     }
 }
 
