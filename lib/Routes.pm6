@@ -94,6 +94,14 @@ sub decode-roll($big-num) {
     $roll;
 }
 
+sub decide-reveal($roll, $choice, $entropy) {
+    my $possible-reveals = (1, 2, 3).Set (-) (+$roll, +$choice).Set;
+    if $possible-reveals > 1 {
+        $possible-reveals.keys.sort[$entropy % 2];
+    } else {
+        $possible-reveals.keys[0];
+    }
+}
 
 sub routes() is export {
     route {
@@ -111,7 +119,7 @@ sub routes() is export {
 
         get -> $encoded-roll, "pick", $choice {
             my $roll = decode-roll(+$encoded-roll);
-            my $reveal = ((1, 2, 3).Set (-) (+$roll, +$choice).Set).pick;
+            my $reveal = decide-reveal($roll, $choice, $encoded-roll);
             
             my $cups-table = HTML::Tag::Macro::Table.new;
             my @data = (1..3).map({ HTML::Tag::a.new(href => "http://$ip/$encoded-roll/pick/$choice/pick/$_", 
@@ -129,7 +137,7 @@ sub routes() is export {
 
         get -> $encoded-roll, "pick", $choice, "pick", $second-choice {
             my $roll = decode-roll(+$encoded-roll);
-            my $reveal = ((1, 2, 3).Set (-) (+$roll, +$choice).Set).pick;
+            my $reveal = decide-reveal($roll, $choice, $encoded-roll);
             
             my $cups-table = HTML::Tag::Macro::Table.new;
             my @data = $solo xx 3;
