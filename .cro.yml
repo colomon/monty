@@ -1,0 +1,15 @@
+---
+name: monty
+cro: 1
+id: monty
+env:  []
+links:  []
+entrypoint: service.p6
+endpoints: 
+  - 
+    port-env: MONTY_PORT
+    name: HTTP
+    protocol: http
+    host-env: MONTY_HOST
+    id: http
+...
