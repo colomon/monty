@@ -6,13 +6,13 @@ use OO::Monitors;
 
 my $ip = "192.168.1.169:20000";
 
-my $solo = HTML::Tag::img.new(src => "http://www.harmonyware.com/pictures/solo.jpg",
+my $solo = HTML::Tag::img.new(src => "http://$ip/static/solo.jpg",
                               width => 300,
                               height => 300);
-my $smiley = HTML::Tag::img.new(src => "http://www.harmonyware.com/pictures/smiley.png",
+my $smiley = HTML::Tag::img.new(src => "http://$ip/static/smiley.png",
                                 width => 300,
                                 height => 300);
-my $frown = HTML::Tag::img.new(src => "http://www.harmonyware.com/pictures/frown.png",
+my $frown = HTML::Tag::img.new(src => "http://$ip/static/frown.png",
                                width => 300,
                                height => 295);
 my $header = q:to/END/;
@@ -166,6 +166,10 @@ sub routes() is export {
 
         get -> "score" {
             content 'text/html', $header ~ "<br><br>" ~ result-table().render;
+        }
+
+        get -> "static", *@path {
+            static "static", @path;
         }
     }
 }
