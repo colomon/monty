@@ -78,26 +78,21 @@ sub result-table {
 }
 
 sub encode-roll($roll) {
-    my $big-num = (10000..1000000000000).roll;
-    $big-num -= $big-num % 8;
-    # dd $big-num.base(2);
-    $big-num += $roll * 2;
-    # dd $big-num.base(2);
-    $big-num += (0..1).roll;
+    my $reveal-roll = (0..1).roll;
+    my $entropy-roll = (0..1).roll;
+    my $big-num = (10000..100000000000).roll * 16 + $reveal-roll * 8 + $roll * 2 + $entropy-roll;
     $big-num;
 }
 
 sub decode-roll($big-num) {
-    # dd $big-num.base(2);
     my $roll = ($big-num +& 0b110) div 2;
-    # dd $roll;
     $roll;
 }
 
-sub decide-reveal($roll, $choice, $entropy) {
+sub decide-reveal($roll, $choice, $encoded-roll) {
     my $possible-reveals = (1, 2, 3).Set (-) (+$roll, +$choice).Set;
     if $possible-reveals > 1 {
-        $possible-reveals.keys.sort[$entropy % 2];
+        $possible-reveals.keys.sort[$encoded-roll +& 0b1000 ?? 1 !! 0];
     } else {
         $possible-reveals.keys[0];
     }
